@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ксерокопия Фото</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        img { max-width: 100%; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Загрузите фото</h2>
+    <input type="file" id="uploadInput" accept="image/*">
+    <button onclick="uploadImage()">Загрузить</button>
+    <br>
+    <img id="preview" style="display:none;">
+    <br>
+    <a id="downloadLink" style="display:none;" download="xerox.jpg">Скачать обработанное фото</a>
+
+    <script>
+        function uploadImage() {
+            const fileInput = document.getElementById("uploadInput");
+            if (!fileInput.files.length) {
+                alert("Выберите файл!");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("image", fileInput.files[0]);
+
+            fetch("/upload", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("preview").src = data.url;
+                document.getElementById("preview").style.display = "block";
+                document.getElementById("downloadLink").href = data.url;
+                document.getElementById("downloadLink").style.display = "block";
+            })
+            .catch(() => alert("Ошибка загрузки!"));
+        }
+    </script>
+</body>
+</html>
